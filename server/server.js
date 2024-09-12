@@ -35,7 +35,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "./client/build", "index.html"));
 });
 
-// SSL Certificates
+// SSL Certificates from Let's Encrypt
 const privateKey = fs.readFileSync("/etc/letsencrypt/live/redlinear.com/privkey.pem", "utf8");
 const certificate = fs.readFileSync("/etc/letsencrypt/live/redlinear.com/cert.pem", "utf8");
 const ca = fs.readFileSync("/etc/letsencrypt/live/redlinear.com/chain.pem", "utf8");
@@ -46,13 +46,13 @@ const credentials = {
   ca: ca,
 };
 
-// SSL options from the local directory (without removing any code)
+// SSL options from the 'ssl' folder inside 'server' directory
 const httpsOptions = {
-  key: fs.readFileSync(path.join(__dirname, "ssl", "privkey.pem")),
-  cert: fs.readFileSync(path.join(__dirname, "ssl", "fullchain.pem")),
+  key: fs.readFileSync(path.join(__dirname, "server", "ssl", "privkey.pem")),
+  cert: fs.readFileSync(path.join(__dirname, "server", "ssl", "fullchain.pem")),
 };
 
-// Create HTTPS server using credentials (Let’s Encrypt) and fallback SSL options
+// Create HTTPS server using either Let's Encrypt credentials or the local SSL options
 const httpsServer = https.createServer(httpsOptions || credentials, app);
 
 // Start the HTTPS server
